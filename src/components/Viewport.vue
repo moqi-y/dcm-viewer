@@ -4,10 +4,8 @@
 
 <script setup>
 import { onMounted } from 'vue';
-import { RenderingEngine, Enums, init as coreInit } from '@cornerstonejs/core';
-import { init as dicomImageLoaderInit } from '@cornerstonejs/dicom-image-loader';
+import { RenderingEngine, Enums} from '@cornerstonejs/core';
 import {
-    init as cornerstoneToolsInit,
     ToolGroupManager,
     WindowLevelTool,
     ZoomTool,
@@ -54,7 +52,6 @@ const init = async () => {
     toolGroup.addTool(WindowLevelTool.toolName);
 
     toolGroup.addViewport(viewportId, renderingEngineId);
-    console.log("csToolsEnums.MouseBindings", csToolsEnums);
 
     /**
      * Primary: 鼠标左键

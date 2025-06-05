@@ -14,7 +14,8 @@
             <div class="left">
                 <UpLoad style="margin-top: 10px;" @change="onUpLoad"></UpLoad>
                 <div class="list-box">
-                    <ImageView style="margin:0 auto 5px auto;" v-for="(item, index) in urls" :key="index" :imageUrl="item" :indexNumber="index">
+                    <ImageView style="margin:0 auto 5px auto;" v-for="(item, index) in urls" :key="index"
+                        :imageUrl="item" :indexNumber="index">
                     </ImageView>
                 </div>
             </div>
@@ -27,25 +28,52 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import Viewport from '@/components/viewport.vue'
 import ImageView from '@/components/ImageView.vue'
 import UpLoad from '@/components/UpLoad.vue';
 
 const urls = ref([])
 
-const onUpLoad = (files) => {
-    console.log("data:", files)
-    Array.from(files).forEach((file) => {
-        const url = URL.createObjectURL(file);
-        urls.value.push(url)
-    })
-    console.log("urls:", urls.value);
-}
+const totalUrls = ref([])
 
-onMounted(async () => {
-    console.log("mounted");
-})
+const onUpLoad = async (files) => {
+    // 将 FileList 转换为数组
+    const fileArray = Array.from(files);
+    totalUrls.value = fileArray.map(file => URL.createObjectURL(file));
+    console.log("totalUrls", totalUrls.value);
+    urls.value = totalUrls.value.slice(0, 10);
+};
+
+// 监听list-box的滚动条事件
+const handleScroll = () => {
+    const list = document.querySelector('.list-box');
+    const listHeight = list.offsetHeight;
+    const scrollTop = list.scrollTop;
+    const scrollHeight = list.scrollHeight;
+
+    if (scrollTop + listHeight >= scrollHeight - 400) {
+        console.log('滚动到底部了');
+        // 在这里添加加载更多图片的逻辑
+        const newUrls = totalUrls.value.slice(urls.value.length, urls.value.length + 10);
+        urls.value = [...urls.value, ...newUrls];
+    }
+};
+
+onMounted(() => {
+    const list = document.querySelector('.list-box');
+    if (list) {
+        // 监听 list-box 的滚动事件
+        list.addEventListener('scroll', handleScroll);
+    } else {
+        console.error('Element with class .list-box not found');
+    }
+});
+
+onUnmounted(() => {
+    const list = document.querySelector('.list-box');
+    list.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>

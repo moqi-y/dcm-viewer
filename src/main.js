@@ -7,7 +7,7 @@ import { init as cornerstoneToolsInit } from '@cornerstonejs/tools';
 
 // 创建并挂载应用  
 const app = createApp(App);
-
+// 初始化 cornerstone相关库
 coreInit();
 dicomImageLoaderInit();
 cornerstoneToolsInit();

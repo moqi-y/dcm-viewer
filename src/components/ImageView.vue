@@ -14,12 +14,6 @@ const props = defineProps({
     },
 })
 
-// 初始化 CornerstoneJS 和加载器
-coreInit();
-
-
-
-
 // 创建全局的 RenderingEngine
 const renderingEngineId = 'preRenderingEngine';
 let renderingEngine;
@@ -60,7 +54,7 @@ const init = async () => {
 }
 
 
-onMounted(async() => {
+onMounted(async () => {
     init();
 });
 
