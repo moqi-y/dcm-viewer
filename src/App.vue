@@ -1,10 +1,10 @@
 
 <template>
-  <Viewport />
+  <Layout />
 </template>
 
 <script setup>
-import Viewport from "@/components/Viewport.vue";
+import Layout from "@/views/Layout.vue";
 </script>
 
 <style scoped>

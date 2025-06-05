@@ -17,10 +17,6 @@ import {
 
 
 const init = async () => {
-    // 初始化 CornerstoneJS 和加载器
-    await coreInit();
-    await dicomImageLoaderInit();
-    await cornerstoneToolsInit();
 
     // 获取元素
     const element = document.getElementById('viewer');
@@ -44,7 +40,8 @@ const init = async () => {
     const viewport = renderingEngine.getViewport(viewportId);
 
     // 加载图像
-    const imageId = 'wadouri:http://127.0.0.1:8080/image_5';
+    const imageURL = 'http://127.0.0.1:8080/image_5';
+    const imageId = 'wadouri:'+ imageURL;
     const imageIds = [imageId]; // 将单个图像 ID 放入数组
 
     /** 添加窗位窗宽工具 */
@@ -89,6 +86,8 @@ const init = async () => {
 
 }
 
+
+
 onMounted(() => {
     init();
 });
@@ -97,7 +96,7 @@ onMounted(() => {
 
 <style scoped>
 #viewer {
-    width: 800px;
-    height: 500px;
+    width: 100%;
+    height: calc(100vh - 100px);
 }
 </style>
