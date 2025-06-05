@@ -13,6 +13,7 @@
     "@cornerstonejs/dicom-image-loader": "^3.19.1",
     "@cornerstonejs/nifti-volume-loader": "^3.19.1",
     "@cornerstonejs/tools": "^3.19.1",
+    "dicom-parser": "^1.8.21",
     "vue": "^3.5.13"
   },
   "devDependencies": {
