@@ -3,8 +3,8 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { RenderingEngine, Enums} from '@cornerstonejs/core';
+import { onMounted, ref, watch } from 'vue';
+import { RenderingEngine, Enums } from '@cornerstonejs/core';
 import {
     ToolGroupManager,
     WindowLevelTool,
@@ -13,6 +13,12 @@ import {
     addTool,
 } from '@cornerstonejs/tools'; // 引入 cornerstoneTools
 
+const props = defineProps({
+    currentImgIndex: Number,
+    totalUrls: Array,
+})
+
+const imageURL = ref(props.currentImg);
 
 const init = async () => {
 
@@ -38,8 +44,7 @@ const init = async () => {
     const viewport = renderingEngine.getViewport(viewportId);
 
     // 加载图像
-    const imageURL = 'http://127.0.0.1:8080/image_5';
-    const imageId = 'wadouri:'+ imageURL;
+    const imageId = 'wadouri:' + props.totalUrls[props.currentImgIndex];
     const imageIds = [imageId]; // 将单个图像 ID 放入数组
 
     /** 添加窗位窗宽工具 */
@@ -83,10 +88,17 @@ const init = async () => {
 
 }
 
-
+watch(() => props.currentImgIndex, (newVal, oldVal) => {
+    if (newVal) {
+        //totalUrls[props.currentImgIndex]为当前dcm的地址
+        // todo 更改后重新渲染
+        
+        init();
+    }
+});
 
 onMounted(() => {
-    init();
+    // init();
 });
 
 </script>

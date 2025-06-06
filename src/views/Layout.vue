@@ -5,9 +5,9 @@
                 <div class="title">DCMVIEWER</div>
             </div>
             <div class="nav-tools">
-                <div class="tool-box">工具1</div>
-                <div class="tool-box">工具2</div>
-                <div class="tool-box">工具3</div>
+                <div class="tool-box" v-for="(item, index) in toolList" :key="index">
+                    <SvgImg :imgSrc="item.path" :imgTitle="item.name" @onClick="onClickTool(item)" />
+                </div>
             </div>
         </div>
         <div class="main">
@@ -15,12 +15,11 @@
                 <UpLoad style="margin-top: 10px;" @change="onUpLoad"></UpLoad>
                 <div class="list-box">
                     <ImgViewer v-for="(item, index) in totalUrls" :key="index" style="margin:0 auto;"
-                        :indexNumber="index" :imageUrl="item">
+                        :indexNumber="index" :imageUrl="item" @onClick="onClickImg(index)">
                     </ImgViewer>
-
                 </div>
             </div>
-            <Viewport></Viewport>
+            <Viewport :currentImgIndex="currentImgIndex" :totalUrls="totalUrls"></Viewport>
         </div>
         <div class="footer">
             <div class="footer-content">准备就绪</div>
@@ -33,8 +32,11 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import Viewport from '@/components/viewport.vue'
 import UpLoad from '@/components/UpLoad.vue';
 import ImgViewer from '@/components/ImgViewer.vue';
+import SvgImg from '@/components/SvgImg.vue';
 
-const totalUrls = ref([])
+const totalUrls = ref([]);
+// 当前绑定工具[左键、滚轮、右键]
+const currentTool = ref([null, "ZoomTool", null]);
 
 const onUpLoad = (files) => {
     // 将 FileList 转换为数组
@@ -43,6 +45,53 @@ const onUpLoad = (files) => {
     console.log(totalUrls.value);
 };
 
+//当前查看图
+const currentImgIndex = ref(null);
+
+//点击预览图
+const onClickImg = (index) => {
+    console.log(index);
+    currentImgIndex.value = index;
+}
+
+//工具栏
+const toolList = ref([
+    {
+        id: 0,
+        name: '缩放',
+        path: '/public/icon/放大_zoom.svg',
+        toolName: 'ZoomTool'
+    },
+    {
+        id: 1,
+        name: '探针工具',
+        path: '/public/icon/瞄准_aiming.svg',
+        toolName: 'DragProbeTool'
+    },
+    {
+        id: 2,
+        name: '长度测量工具',
+        path: '/public/icon/尺子_ruler.svg',
+        toolName: 'LengthTool'
+    },
+    {
+        id: 3,
+        name: '角度测量工具',
+        path: '/public/icon/角度_rotation-one.svg',
+        toolName: 'AngleTool'
+    },
+    {
+        id: 4,
+        name: '矩形工具',
+        path: '/public/icon/矩形_rectangle-one.svg',
+        toolName: 'RectTool'
+    }
+]);
+
+// 点击工具栏
+const onClickTool = (tool) => {
+    console.log(tool);
+}
 
 onMounted(() => {
 

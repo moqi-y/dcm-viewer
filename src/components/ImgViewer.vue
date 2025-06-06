@@ -1,5 +1,5 @@
 <template>
-        <img v-if="imgData" :src="imgData" :alt="`dicom image ${indexNumber}`" />
+        <img v-if="imgData" :src="imgData" :alt="`dicom image ${indexNumber}`"  @click="$emit('onClick', indexNumber)"/>
 </template>
 
 <script setup>
@@ -14,7 +14,6 @@ const props = defineProps({
 
 const getBase64 = async (url) => {
     const base64 = await dicomToBase64(url);
-    console.log("base64====", base64);
     return base64;
 }
 
