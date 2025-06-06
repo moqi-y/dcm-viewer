@@ -1,3 +1,5 @@
+<!-- demo示例组件 -->
+
 <template>
     <div>
         <input type="file" @change="handleFileUpload" />
