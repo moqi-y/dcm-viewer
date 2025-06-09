@@ -1,5 +1,5 @@
 <template>
-    <div class="layout">
+    <div id="layout">
         <div class="header">
             <div class="logo">
                 <div class="title">DCMVIEWER</div>
@@ -122,7 +122,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.layout {
+#layout {
     width: 100%;
     height: 100%;
     display: flex;
