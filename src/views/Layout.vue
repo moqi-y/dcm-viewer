@@ -8,6 +8,8 @@
                 <div class="tool-box" v-for="(item, index) in toolList" :key="index">
                     <SvgImg :imgSrc="item.path" :imgTitle="item.name" @onClick="onClickTool(item)" />
                 </div>
+                <SvgImg class="tool-box " imgSrc="/icon/擦除_erase.svg" imgTitle="擦除标记" @onClick="clearMarks" />
+                <SvgImg class="tool-box " imgSrc="/icon/格式_format.svg" imgTitle="移除工具" @onClick="deactiveAllTools" />
             </div>
         </div>
         <div class="main">
@@ -19,7 +21,8 @@
                     </ImgViewer>
                 </div>
             </div>
-            <Viewport :currentImgIndex="currentImgIndex" :totalUrls="totalUrls"></Viewport>
+            <Viewport ref="viewportRef" :currentImgIndex="currentImgIndex" :totalUrls="totalUrls"
+                :currentTool="currentTool"></Viewport>
         </div>
         <div class="footer">
             <div class="footer-content">准备就绪</div>
@@ -34,9 +37,10 @@ import UpLoad from '@/components/UpLoad.vue';
 import ImgViewer from '@/components/ImgViewer.vue';
 import SvgImg from '@/components/SvgImg.vue';
 
+const viewportRef = ref(null);
 const totalUrls = ref([]);
-// 当前绑定工具[左键、滚轮、右键]
-const currentTool = ref([null, "ZoomTool", null]);
+// 当前绑定工具[左键]
+const currentTool = ref("");
 
 const onUpLoad = (files) => {
     // 将 FileList 转换为数组
@@ -58,9 +62,15 @@ const onClickImg = (index) => {
 const toolList = ref([
     {
         id: 0,
-        name: '缩放',
+        name: '缩放工具',
         path: '/public/icon/放大_zoom.svg',
         toolName: 'ZoomTool'
+    },
+    {
+        id: 1,
+        name: '窗位窗宽',
+        path: '/public/icon/对比_contrast-view.svg',
+        toolName: 'WindowLevelTool'
     },
     {
         id: 1,
@@ -84,13 +94,25 @@ const toolList = ref([
         id: 4,
         name: '矩形工具',
         path: '/public/icon/矩形_rectangle-one.svg',
-        toolName: 'RectTool'
+        toolName: 'RectangleROITool'
     }
 ]);
 
 // 点击工具栏
 const onClickTool = (tool) => {
     console.log(tool);
+    console.log("viewportRef.value", viewportRef.value);
+    currentTool.value = tool.toolName;
+    viewportRef.value.activeTool(currentTool.value);
+}
+//解绑工具
+const deactiveAllTools = () => {
+    viewportRef.value.deactiveTool();
+}
+
+//擦除标记
+const clearMarks = () => {
+    viewportRef.value.clearAllMark();
 }
 
 onMounted(() => {
