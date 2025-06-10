@@ -1,5 +1,32 @@
-# Vue 3 + Vite
+# dcm-viewer 基于Vue3的医学影像dcm查看器
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 项目介绍
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+dcm-viewer 是一个基于 Vue3 的医学影像 dcm 查看器，支持多文件上传、多文件预览、多文件切换、缩放、旋转、测量、标记等功能。
+
+## 项目特点
+- 支持dcm(dicom)格式的医学影像查看。
+- 支持对dcm文件进行缩放、旋转、测量、标记等操作。
+- 支持多文件上传、多文件预览、多文件切换。
+- 支持对dcm文件进行切片显示。
+- 支持对dcm文件进行标注和测量。
+
+## 安装依赖
+```
+npm run install
+```
+
+## 运行项目
+```
+npm run serve
+```
+
+## 打包项目
+```
+npm run build
+```
+
+## 项目截图
+
+
+## 联系方式
