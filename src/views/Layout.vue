@@ -64,37 +64,37 @@ const toolList = ref([
     {
         id: 0,
         name: '缩放工具',
-        path: '/public/icon/放大_zoom.svg',
+        path: '/icon/放大_zoom.svg',
         toolName: 'ZoomTool'
     },
     {
         id: 1,
         name: '窗位窗宽',
-        path: '/public/icon/对比_contrast-view.svg',
+        path: '/icon/对比_contrast-view.svg',
         toolName: 'WindowLevelTool'
     },
     {
-        id: 1,
+        id: 2,
         name: '探针工具',
-        path: '/public/icon/瞄准_aiming.svg',
+        path: '/icon/瞄准_aiming.svg',
         toolName: 'DragProbeTool'
     },
     {
-        id: 2,
+        id: 3,
         name: '长度测量工具',
-        path: '/public/icon/尺子_ruler.svg',
+        path: '/icon/尺子_ruler.svg',
         toolName: 'LengthTool'
     },
     {
-        id: 3,
+        id: 4,
         name: '角度测量工具',
-        path: '/public/icon/角度_rotation-one.svg',
+        path: '/icon/角度_rotation-one.svg',
         toolName: 'AngleTool'
     },
     {
-        id: 4,
+        id: 5,
         name: '矩形工具',
-        path: '/public/icon/矩形_rectangle-one.svg',
+        path: '/icon/矩形_rectangle-one.svg',
         toolName: 'RectangleROITool'
     }
 ]);
