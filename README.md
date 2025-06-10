@@ -18,7 +18,7 @@ npm run install
 
 ## 运行项目
 ```
-npm run serve
+npm run dev
 ```
 
 ## 打包项目
@@ -27,6 +27,4 @@ npm run build
 ```
 
 ## 项目截图
-
-
-## 联系方式
+![dcm-viewer](https://github.com/moqi-y/dcm-viewer/blob/master/public/project/Snipaste.png)
