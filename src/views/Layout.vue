@@ -34,7 +34,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import Viewport from '@/components/viewport.vue'
+import Viewport from '@/components/Viewport.vue'
 import UpLoad from '@/components/UpLoad.vue';
 import ImgViewer from '@/components/ImgViewer.vue';
 import SvgImg from '@/components/SvgImg.vue';
