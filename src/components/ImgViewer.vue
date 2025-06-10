@@ -5,7 +5,9 @@
 <script setup>
 import dicomToBase64 from '@/utils/dicomToBase64.js';
 import { ref, watch,onMounted } from 'vue';
+import taggleLoading from '@/utils/taggleLoading';
 
+const loading = taggleLoading()
 const imgData = ref(null);
 const props = defineProps({
     imageUrl: String,
@@ -18,11 +20,12 @@ const getBase64 = async (url) => {
 }
 
 const setImgData = async (url) => {
+    loading.show();
     imgData.value = await getBase64(url);
+    loading.hide();
 }
 
 watch(() => props.imageUrl, async (newVal) => {
-    // console.log("newVal====", newVal);
     setImgData(props.imageUrl);
 })
 

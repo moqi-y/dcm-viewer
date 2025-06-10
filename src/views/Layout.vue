@@ -36,7 +36,9 @@ import Viewport from '@/components/viewport.vue'
 import UpLoad from '@/components/UpLoad.vue';
 import ImgViewer from '@/components/ImgViewer.vue';
 import SvgImg from '@/components/SvgImg.vue';
+import taggleLoading from '@/utils/taggleLoading';
 
+const loading = taggleLoading()
 const viewportRef = ref(null);
 const totalUrls = ref([]);
 // 当前绑定工具[左键]
@@ -46,7 +48,6 @@ const onUpLoad = (files) => {
     // 将 FileList 转换为数组
     const fileArray = Array.from(files);
     totalUrls.value = fileArray.map(file => URL.createObjectURL(file));
-    console.log(totalUrls.value);
 };
 
 //当前查看图
@@ -116,7 +117,7 @@ const clearMarks = () => {
 }
 
 onMounted(() => {
-
+   
 });
 
 </script>
