@@ -15,6 +15,8 @@
         <div class="main">
             <div class="left">
                 <UpLoad style="margin-top: 10px;" @change="onUpLoad"></UpLoad>
+                <!-- 下载示例dcm -->
+                 <a style="color: aliceblue;font-size: 12px;" href="/dcm/PATIENT_DICOM/image_100" download="DICOM示例.dcm">下载示例dcm文件</a>
                 <div class="list-box">
                     <ImgViewer v-for="(item, index) in totalUrls" :key="index" style="margin:0 auto;"
                         :indexNumber="index" :imageUrl="item" @onClick="onClickImg(index)">
