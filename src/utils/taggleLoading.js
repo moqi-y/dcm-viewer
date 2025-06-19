@@ -11,9 +11,9 @@ import { createApp } from "vue";
 
 const div = document.createElement("div");
 const app = createApp(LoadIcon);
+app.mount(div);
 
 export default function taggleLoading() {
-    app.mount(div);
     document.body.appendChild(div);
     div.style.display = "none";
     return {
@@ -25,3 +25,5 @@ export default function taggleLoading() {
         }
     }
 }
+
+

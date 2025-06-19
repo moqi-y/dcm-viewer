@@ -19,7 +19,7 @@
                  <a style="color: aliceblue;font-size: 12px;" href="/dcm/PATIENT_DICOM/image_100" download="DICOM示例.dcm">下载示例dcm文件</a>
                 <div class="list-box">
                     <ImgViewer v-for="(item, index) in totalUrls" :key="index" style="margin:0 auto;"
-                        :indexNumber="index" :imageUrl="item" @onClick="onClickImg(index)">
+                        :indexNumber="index" :imageUrl="item" @onClick="onClickImg(index)" @deleteImage="deleteImage(index)">
                     </ImgViewer>
                 </div>
             </div>
@@ -38,6 +38,8 @@ import Viewport from '@/components/Viewport.vue'
 import UpLoad from '@/components/UpLoad.vue';
 import ImgViewer from '@/components/ImgViewer.vue';
 import SvgImg from '@/components/SvgImg.vue';
+import toast from '@/utils/toast';
+
 
 const viewportRef = ref(null);
 const totalUrls = ref([]);
@@ -135,6 +137,12 @@ const toolsStatusReset = () => {
     toolList.value.forEach(item => {
         item.isActive = false;
     });
+}
+
+// 删除图片
+const deleteImage = (index) => {
+ totalUrls.value.splice(index, 1);
+ toast().showSuccess("删除成功");
 }
 
 onMounted(() => {
