@@ -1,5 +1,5 @@
 <template>
-    <div class="box" @click="$emit('onClick')">
+    <div :class="`box ${isActive?'active' : ''}`" @click="$emit('onClick')">
         <img :src="imgSrc" alt="" :title="imgTitle">
     </div>
 </template>
@@ -13,6 +13,10 @@ const props = defineProps({
     imgTitle: {
         type: String,
         default: '工具'
+    },
+    isActive: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -28,6 +32,10 @@ const props = defineProps({
 }
 
 .box:hover {
+    background: #e9e7e768;
+}
+
+.active {
     background: #e9e7e768;
 }
 

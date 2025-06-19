@@ -110,21 +110,6 @@ const activeTool = (toolNameSet) => {
             },
         ],
     });
-    // toolGroup.setToolActive(toolMapping[toolNameSet[1]], {
-    //     bindings: [
-    //         {
-    //             mouseButton: csToolsEnums.MouseBindings.Wheel, // 鼠标滚轮
-    //         },
-    //     ],
-    // });
-    // toolGroup.setToolActive(toolMapping[toolNameSet[2]], {
-    //     bindings: [
-    //         {
-    //             mouseButton: csToolsEnums.MouseBindings.Secondary, // 鼠标右键
-    //         },
-    //     ]
-    // })
-
 }
 
 // 解绑工具

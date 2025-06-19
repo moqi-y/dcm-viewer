@@ -6,9 +6,9 @@
             </div>
             <div class="nav-tools">
                 <div class="tool-box" v-for="(item, index) in toolList" :key="index">
-                    <SvgImg :imgSrc="item.path" :imgTitle="item.name" @onClick="onClickTool(item)" />
+                    <SvgImg :imgSrc="item.path" :imgTitle="item.name" @onClick="onClickTool(item)" :isActive="item.isActive" />
                 </div>
-                <SvgImg class="tool-box " imgSrc="/icon/擦除_erase.svg" imgTitle="擦除标记" @onClick="clearMarks" />
+                <SvgImg class="tool-box " imgSrc="/icon/擦除_erase.svg" imgTitle="隐藏标记" @onClick="clearMarks" />
                 <SvgImg class="tool-box " imgSrc="/icon/格式_format.svg" imgTitle="移除工具" @onClick="deactiveAllTools" />
             </div>
         </div>
@@ -65,55 +65,76 @@ const toolList = ref([
         id: 0,
         name: '缩放工具',
         path: '/icon/放大_zoom.svg',
-        toolName: 'ZoomTool'
+        toolName: 'ZoomTool',
+        isActive: false
     },
     {
         id: 1,
         name: '窗位窗宽',
         path: '/icon/对比_contrast-view.svg',
-        toolName: 'WindowLevelTool'
+        toolName: 'WindowLevelTool',
+        isActive: false
     },
     {
         id: 2,
         name: '探针工具',
         path: '/icon/瞄准_aiming.svg',
-        toolName: 'DragProbeTool'
+        toolName: 'DragProbeTool',
+        isActive: false
     },
     {
         id: 3,
         name: '长度测量工具',
         path: '/icon/尺子_ruler.svg',
-        toolName: 'LengthTool'
+        toolName: 'LengthTool',
+        isActive: false
     },
     {
         id: 4,
         name: '角度测量工具',
         path: '/icon/角度_rotation-one.svg',
-        toolName: 'AngleTool'
+        toolName: 'AngleTool',
+        isActive: false
     },
     {
         id: 5,
         name: '矩形工具',
         path: '/icon/矩形_rectangle-one.svg',
-        toolName: 'RectangleROITool'
+        toolName: 'RectangleROITool',
+        isActive: false
     }
 ]);
 
 // 点击工具栏
 const onClickTool = (tool) => {
-    console.log(tool);
-    console.log("viewportRef.value", viewportRef.value);
     currentTool.value = tool.toolName;
     viewportRef.value.activeTool(currentTool.value);
+    toolList.value.forEach(item => {
+        if (item.toolName === tool.toolName) {
+            item.isActive = true;
+        } else {
+            item.isActive = false;
+        }
+    })
 }
 //解绑工具
 const deactiveAllTools = () => {
     viewportRef.value.deactiveTool();
+    toolsStatusReset();
 }
 
 //擦除标记
 const clearMarks = () => {
     viewportRef.value.clearAllMark();
+    toolsStatusReset();
+}
+
+
+// 工具栏状态重置
+const toolsStatusReset = () => {
+    toolList.value.forEach(item => {
+        item.isActive = false;
+    });
 }
 
 onMounted(() => {
