@@ -23,9 +23,13 @@ const props = defineProps({
 </script>
 
 <style scoped>
+/*
+ * 全局已开启 border-box，这里的宽高包含 padding。
+ * 35px = 25px 图标 + 左右各 5px padding，保持改动前的视觉尺寸不变。
+ */
 .box {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
     padding: 5px;
     border-radius: 50%;
     cursor: pointer;
