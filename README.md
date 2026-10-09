@@ -97,3 +97,4 @@ src/
 ## 项目截图
 
 ![dcm-viewer](https://raw.githubusercontent.com/moqi-y/dcm-viewer/refs/heads/master/public/project/Snipaste.png)
+![dcm-viewer](https://raw.githubusercontent.com/moqi-y/dcm-viewer/refs/heads/master/public/project/Snipaste_2026.png)
