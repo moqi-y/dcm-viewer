@@ -11,43 +11,56 @@
                 <div class="title">DCMVIEWER</div>
             </div>
 
-            <div class="toolbar">
-                <!-- 左键工具 -->
-                <div class="toolbar-group">
-                    <SvgImg
-                        v-for="tool in toolList"
-                        :key="tool.id"
-                        :imgSrc="tool.icon"
-                        :imgTitle="`${tool.name} (${tool.shortcut})`"
-                        :isActive="currentTool === tool.toolName"
-                        @onClick="onSelectTool(tool.toolName)"
-                    />
+            <div class="header-right">
+                <div class="toolbar">
+                    <!-- 左键工具 -->
+                    <div class="toolbar-group">
+                        <SvgImg
+                            v-for="tool in toolList"
+                            :key="tool.id"
+                            :imgSrc="tool.icon"
+                            :imgTitle="`${tool.name} (${tool.shortcut})`"
+                            :isActive="currentTool === tool.toolName"
+                            @onClick="onSelectTool(tool.toolName)"
+                        />
+                    </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <!-- 视口操作 -->
+                    <div class="toolbar-group">
+                        <SvgImg imgSrc="/icon/格式_format.svg" imgTitle="取消工具选择 (Esc)" @onClick="clearTool" />
+                        <SvgImg imgSrc="/icon/擦除_erase.svg" imgTitle="清除所有标记" @onClick="clearMarks" />
+                        <SvgImg imgSrc="/icon/重置_reset.svg" imgTitle="重置视口 (0)" @onClick="resetViewport" />
+                        <SvgImg imgSrc="/icon/逆时针_rotate-left.svg" imgTitle="向左旋转 90° (,)" @onClick="rotate('left')" />
+                        <SvgImg imgSrc="/icon/顺时针_rotate-right.svg" imgTitle="向右旋转 90° (.)" @onClick="rotate('right')" />
+                        <SvgImg imgSrc="/icon/水平翻转_flip-horizontal.svg" imgTitle="水平翻转 (H)" @onClick="flip('horizontal')" />
+                        <SvgImg imgSrc="/icon/垂直翻转_flip-vertical.svg" imgTitle="垂直翻转 (V)" @onClick="flip('vertical')" />
+                        <SvgImg imgSrc="/icon/反色_invert.svg" imgTitle="反色 (I)" @onClick="toggleInvert" />
+                    </div>
+
+                    <div class="toolbar-divider"></div>
+
+                    <!-- 窗位窗宽预设 -->
+                    <select class="preset-select" :value="presetKey" @change="onPresetChange">
+                        <option value="">窗位窗宽预设</option>
+                        <option v-for="preset in windowPresets" :key="preset.key" :value="preset.key">
+                            {{ preset.label }}
+                        </option>
+                        <option value="__reset">恢复原始窗宽窗位</option>
+                    </select>
                 </div>
 
-                <div class="toolbar-divider"></div>
-
-                <!-- 视口操作 -->
-                <div class="toolbar-group">
-                    <SvgImg imgSrc="/icon/格式_format.svg" imgTitle="取消工具选择 (Esc)" @onClick="clearTool" />
-                    <SvgImg imgSrc="/icon/擦除_erase.svg" imgTitle="清除所有标记" @onClick="clearMarks" />
-                    <SvgImg imgSrc="/icon/重置_reset.svg" imgTitle="重置视口 (0)" @onClick="resetViewport" />
-                    <SvgImg imgSrc="/icon/逆时针_rotate-left.svg" imgTitle="向左旋转 90° (,)" @onClick="rotate('left')" />
-                    <SvgImg imgSrc="/icon/顺时针_rotate-right.svg" imgTitle="向右旋转 90° (.)" @onClick="rotate('right')" />
-                    <SvgImg imgSrc="/icon/水平翻转_flip-horizontal.svg" imgTitle="水平翻转 (H)" @onClick="flip('horizontal')" />
-                    <SvgImg imgSrc="/icon/垂直翻转_flip-vertical.svg" imgTitle="垂直翻转 (V)" @onClick="flip('vertical')" />
-                    <SvgImg imgSrc="/icon/反色_invert.svg" imgTitle="反色 (I)" @onClick="toggleInvert" />
-                </div>
-
-                <div class="toolbar-divider"></div>
-
-                <!-- 窗位窗宽预设 -->
-                <select class="preset-select" :value="presetKey" @change="onPresetChange">
-                    <option value="">窗位窗宽预设</option>
-                    <option v-for="preset in windowPresets" :key="preset.key" :value="preset.key">
-                        {{ preset.label }}
-                    </option>
-                    <option value="__reset">恢复原始窗宽窗位</option>
-                </select>
+                <!-- GitHub 仓库 -->
+                <a
+                    class="github-link"
+                    href="https://github.com/moqi-y/dcm-viewer"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="GitHub 仓库：moqi-y/dcm-viewer"
+                >
+                    <img src="/icon/github.svg" alt="GitHub" />
+                </a>
             </div>
         </div>
 
@@ -289,9 +302,16 @@ const onSelectTool = (toolName) => {
     callViewport('setActiveTool', next);
 };
 
+/**
+ * 取消工具选择。
+ * 按钮本身是有效的（工具会退回被动状态、工具栏高亮也会取消），
+ * 只是原来没有任何提示，用户点了像没反应，所以补一条反馈。
+ */
 const clearTool = () => {
+    const hadTool = !!currentTool.value;
     store.clearTool();
     callViewport('clearActiveTool');
+    toast().showSuccess(hadTool ? '已取消工具选择' : '当前没有选中的工具');
 };
 
 const clearMarks = () => callViewport('clearAnnotations');
@@ -431,6 +451,36 @@ onBeforeUnmount(() => {
     line-height: 56px;
     margin-left: 20px;
     white-space: nowrap;
+}
+
+/* 头部右侧：工具栏 + GitHub 入口 */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* GitHub 仓库入口：尺寸和工具栏图标一致，hover 效果也统一 */
+.github-link {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.github-link:hover {
+    background: #e9e7e768;
+}
+
+.github-link img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
 }
 
 .toolbar {

@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, h } from 'vue';
 import Toast from '@/components/Toast.vue';
 import { createApp } from 'vue';
 
@@ -44,11 +44,26 @@ const show = (message, type = 'success', duration = DURATION) => {
 };
 
 const div = document.createElement('div');
-div.style.position = 'relative';
-// Toast 用的是 fixed 定位，这里把容器自身的尺寸影响去掉
 div.style.all = 'initial';
+// Toast 用的是 fixed 定位，这里把容器自身的尺寸影响去掉
+div.style.position = 'relative';
 
-const app = createApp(Toast, state);
+/*
+ * 注意：不能直接 createApp(Toast, state)。
+ * 根组件的 props 会在挂载时被复制成一份普通值，
+ * 之后 state.visible 变了 Toast 也不会重渲染 —— 提示条永远不出现。
+ * 这里用一层 render 函数把响应式状态透传下去，状态变化都会重新渲染。
+ */
+const app = createApp({
+    setup() {
+        return () =>
+            h(Toast, {
+                visible: state.visible,
+                message: state.message,
+                type: state.type,
+            });
+    },
+});
 app.mount(div);
 document.body.appendChild(div);
 

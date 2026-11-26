@@ -32,9 +32,17 @@
 
     <!-- 右上角：方位标记 -->
     <div v-if="!isEmpty" class="overlay overlay--top-right orientation-marker">
-      <span>{{ orientationLabel.top }}</span>
+      <div class="orientation-marker__row">
+        <span class="orientation-marker__side">{{ orientationLabel.left }}</span>
+        <span class="orientation-marker__axis">{{ orientationLabel.top }}</span>
+        <span class="orientation-marker__side">{{ orientationLabel.right }}</span>
+      </div>
       <span class="orientation-marker__center">{{ orientationLabel.center }}</span>
-      <span>{{ orientationLabel.bottom }}</span>
+      <div class="orientation-marker__row">
+        <span class="orientation-marker__side"></span>
+        <span class="orientation-marker__axis">{{ orientationLabel.bottom }}</span>
+        <span class="orientation-marker__side"></span>
+      </div>
     </div>
 
     <!-- 底部切片导航 -->
@@ -75,11 +83,10 @@ import {
     nextTick,
 } from 'vue';
 import { RenderingEngine, Enums, EVENTS, metaData, imageLoader } from '@cornerstonejs/core';
-import { ToolGroupManager, addTool, annotation, ArrowAnnotateTool, Enums as csEnums } from '@cornerstonejs/tools';
+import { ToolGroupManager, addTool, annotation, utilities, ArrowAnnotateTool, Enums as csEnums } from '@cornerstonejs/tools';
 import {
     TOOL_CLASSES,
     ALWAYS_ACTIVE,
-    ANNOTATION_TOOLS,
     CT_WINDOW_PRESETS,
 } from '@/config/tools';
 import toast from '@/utils/toast';
@@ -424,17 +431,41 @@ const rotate = (direction) => {
     updateZoomRatio();
 };
 
+/**
+ * 水平 / 垂直翻转。
+ *
+ * 关键点：只把「翻转标记」交给 setCamera，不能把 getCamera() 的整份结果再塞回去。
+ *
+ * Cornerstone 的 setCamera 收到 flipHorizontal 后，会在内部重算镜像后的
+ * viewPlaneNormal / position / focalPoint 并写进相机（真正的翻转动作）；
+ * 但如果调用方同时传入了旧的 viewPlaneNormal / position / focalPoint，
+ * setCamera 后面又会用这份旧数据把它们覆盖回去 —— 镜像被原样撤销，
+ * 画面看起来完全没变（之前就是这个 bug）。
+ *
+ * 另外翻转状态以 Cornerstone 内部为准，本地只做同步，
+ * 避免两边状态不一致（比如换序列时 Cornerstone 会自己复位）。
+ */
 const flip = (axis) => {
     if (!stackViewport) return;
+
     const camera = stackViewport.getCamera();
     if (axis === 'horizontal') {
-        flipH.value = !flipH.value;
-        stackViewport.setCamera({ ...camera, flipHorizontal: flipH.value });
+        stackViewport.setCamera({ flipHorizontal: !camera.flipHorizontal });
     } else {
-        flipV.value = !flipV.value;
-        stackViewport.setCamera({ ...camera, flipVertical: flipV.value });
+        stackViewport.setCamera({ flipVertical: !camera.flipVertical });
     }
+
+    syncFlipState();
     stackViewport.render();
+    toast().showSuccess(axis === 'horizontal' ? '已水平翻转' : '已垂直翻转');
+};
+
+/** 把视口真实的翻转状态同步回本地（方位标记要用） */
+const syncFlipState = () => {
+    if (!stackViewport) return;
+    const camera = stackViewport.getCamera();
+    flipH.value = !!camera.flipHorizontal;
+    flipV.value = !!camera.flipVertical;
 };
 
 const toggleInvert = () => {
@@ -467,14 +498,12 @@ const resetViewport = async () => {
     if (!stackViewport) return;
 
     resetOrientation();
-    // resetCamera 会一并清掉旋转和 VOI，所以这里要等一帧，
-    // 让 Cornerstone 先把相机算好，再按「适应窗口」重设取景。
+    /*
+     * resetCamera 内部会把 flipHorizontal / flipVertical 复位，也不要再把
+     * getCamera() 的整份结果传回去（见 flip 的注释），只按需覆盖单个字段。
+     */
     stackViewport.resetCamera();
-    stackViewport.setCamera({
-        ...stackViewport.getCamera(),
-        flipHorizontal: false,
-        flipVertical: false,
-    });
+    syncFlipState();
 
     await nextTick();
 
@@ -482,10 +511,7 @@ const resetViewport = async () => {
     // 这里改成完整适应窗口，宽图不会被裁掉。取不到比例时保持默认取景。
     const fit = computeFitParallelScale();
     if (fit) {
-        stackViewport.setCamera({
-            ...stackViewport.getCamera(),
-            parallelScale: fit,
-        });
+        stackViewport.setCamera({ parallelScale: fit });
     }
 
     stackViewport.render();
@@ -668,16 +694,27 @@ const resetWindowLevel = () => {
 
 /**
  * 真正清除标注。
- * 原实现调的是 setToolDisabled，只是把工具禁用，标注一直留在图上。
+ *
+ * 关键点：不能按 groupKey 删除。
+ * Cornerstone 的 annotation manager 用 enabledElement.FrameOfReferenceUID
+ * 当分组键，而这批示例 DICOM 根本没有 FrameOfReferenceUID 这个标签，
+ * 分组键是 undefined，按它去删一条都匹配不上（之前就是这么"点了没反应"）。
+ * 所以直接清空标注管理器里的全部标注 —— 本程序只有一个视口，
+ * 「清除所有标记」也正是这个意思。
+ *
+ * 删除后还要主动让标注层重绘：标注画在独立的 SVG 图层上，
+ * 光调 stackViewport.render() 不会更新它。
  */
 const clearAnnotations = () => {
     if (!stackViewport) return;
-    ANNOTATION_TOOLS.forEach((toolName) => {
-        annotation.state.removeAnnotations(toolName, VIEWPORT_ID);
-    });
-    annotation.visibility.showAllAnnotations(VIEWPORT_ID);
+
+    const count = annotation.state.getAllAnnotations?.().length ?? 0;
+    annotation.state.removeAllAnnotations();
+    annotation.visibility.showAllAnnotations();
+    utilities.triggerAnnotationRenderForViewportIds([VIEWPORT_ID]);
     stackViewport.render();
-    toast().showSuccess('已清除所有标记');
+
+    toast().showSuccess(count ? `已清除所有标记（${count}）` : '没有可清除的标记');
 };
 
 /* ------------------------------------------------------------------ *
@@ -939,6 +976,23 @@ defineExpose({
     gap: 2px;
     background: transparent;
     padding: 0;
+}
+
+.orientation-marker__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.orientation-marker__axis,
+.orientation-marker__side {
+    min-width: 12px;
+    text-align: center;
+}
+
+/* 左右方位字样比上下稍淡一点，视觉上仍以 A/P 为主 */
+.orientation-marker__side {
+    opacity: 0.75;
 }
 
 .orientation-marker__center {

@@ -124,19 +124,6 @@ export const ALWAYS_ACTIVE = [
 ];
 
 /**
- * 会在视口上留下数据的工具：清除标注时按这张表逐个清。
- * 注意探针工具也要清，它的读数同样挂在 annotation 状态里。
- */
-export const ANNOTATION_TOOLS = [
-    LengthTool.toolName,
-    AngleTool.toolName,
-    RectangleROITool.toolName,
-    EllipticalROITool.toolName,
-    ArrowAnnotateTool.toolName,
-    DragProbeTool.toolName,
-];
-
-/**
  * 常用 CT 窗宽窗位预设，单位为 Hounsfield（窗位为中心，窗宽为范围）。
  */
 export const CT_WINDOW_PRESETS = [
